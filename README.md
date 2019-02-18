@@ -158,19 +158,23 @@ time perl /Users/bono/Downloads/trinityrnaseq/util/align_and_estimate_abundance.
 ## 3. de novo transcriptome assembly
 
 ### Homebrew のインストール
+Homebrewが入っていなければ、以下の手順でインストール。
 
 ```
 $ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
-Trinityのインストールに必要なgccとcmakeを先にインストール
+Trinityのインストールに必要なgccとcmakeを先にインストール。
+
 ```
 $ brew install -v gcc@8
 $ brew install -v cmake
 ```
 
 ### Trinity のインストール
-Trinityは転写配列のアッセンブルに使われるソフトウェアである。以下のコマンドを実行してTrinityをインストールする。
+
+Trinityは転写配列のアッセンブルに使われるソフトウェアである。
+以下のコマンドを実行してTrinityをインストールする。
 
 ```
 $ brew tap brewsci/bio
@@ -185,3 +189,14 @@ $ brew cask install Java
 ```
 
 インストールに際して、スーパーユーザー権限が必要となることに注意（マシンの管理者権限が必要）。
+
+### Trinity実行
+以下のコマンドでTrinity実行。
+
+```
+$ Trinity --seqType fq --left DRR092257_1.fq.gz  --right DRR092257_2.fq.gz --max_memory 16G --CPU 4
+```
+
+変換したFASTQファイルを`--left`と`--right`オプションで、使用可能な最大メモリを`--max_memory`で、使用可能な最大CPU数を`--CPU`で指定する。
+Trinityの実行は非常に長い時間がかかる。
+途中でエラー停止することなく、`trinity_out_dir`ディレクトリ中に`Trinity.fastaが`できていれば実行成功である。
