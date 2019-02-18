@@ -3,14 +3,17 @@
 [応用動物昆虫学会の告知ページ](http://odokon.org/archives/2018/1228_000000.php)
 
 ## 開催概要
-近年の次世代シーケンサー(NGS)の低価格化等の理由により、データ解析はデータの生産者が行う時代になっております。昆虫学においてもNGSを利用した研究が増えてきており、その有用性は言うまでもありません。しかしNGSを利用する際に必要な膨大なデータを解析するスキルが学会内でもまだ十分に普及していないのが現状です。そこで2019年本学会大会に合わせて、ハンズオンのデータ解析講習会を企画しました。
+近年の次世代シーケンサー(NGS)の低価格化等の理由により、データ解析はデータの生産者が行う時代になっております。
+昆虫学においてもNGSを利用した研究が増えてきており、その有用性は言うまでもありません。
+しかしNGSを利用する際に必要な膨大なデータを解析するスキルが学会内でもまだ十分に普及していないのが現状です。
+そこで2019年本学会大会に合わせて、ハンズオンのデータ解析講習会を企画しました。
 
 ### 講習会の日時
-2019年3月24日 (日曜日)(2019年の本学会大会の初日の前日) 13:00-16:00
+2019年3月24日 (日曜日)(2019年の応用動物昆虫学会大会の初日の前日) 13:00-16:00
 
 ### 場所
 情報・システム研究機構 ライフサイエンス統合データベースセンター 柏ラボ
-住所 〒277-0871 千葉県柏市若柴178-4-4 東京大学 柏の葉キャンパス駅前 サテライト 6階(つくばエクスプレス 柏の葉キャンパス駅降りてすぐ)
+住所： 〒277-0871 千葉県柏市若柴178-4-4 東京大学 柏の葉キャンパス駅前 サテライト 6階(つくばエクスプレス 柏の葉キャンパス駅降りてすぐ)
 
 ### 内容
 公共データベース内にある昆虫のNGSデータを用いたトランスクリプトーム解析
@@ -47,7 +50,7 @@ DDBJ/EBI/NCBIの3つによって運営されている国際塩基配列データ
 日本からだとDDBJのそれが最寄り。
 
 #### 【課題1】[DDBJ Search](http://sra.dbcls.jp/)を使って、SRAから興味深いデータを検索
-1. 気になるFASTQデータをテキスト検索、SRA(DDBJ)からダウンロードします(例: DRR118520)
+1. 気になるFASTQデータをテキスト検索、SRA(DDBJ)からダウンロードします(例: SRR8189328,SRR81893289,DRR118520)
 2. 出て来た**RUN**の所の*sra*のリンクを「リンクのアドレスをコピー」して、例えば`curl`コマンドで取得します
 `curl -O ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/sra/ByExp/sra/DRX/DRX111/DRX111587/DRR118520/DRR118520.sra`
 3. ダウンロードしてきたファイルサイズがオリジナルのそれと同じならOK。そうでない場合は再取得
@@ -74,7 +77,7 @@ TSAに関してもSRA同様、DDBJ/EBI/NCBIで同じデータが維持されて�
 - Trinity付属プログラムの[```align_and_estimate_abundance.pl```](https://github.com/trinityrnaseq/trinityrnaseq/wiki/Trinity-Transcript-Quantification) を使うと、転写量を見積もって定量できる
 
 
-### 【課題3】アッセンブル済みのcDNA配列セットを再利用して発現定量
+### 【課題3】アッセンブル済みのcDNA配列セットを利用して発現定量
 
 #### ツールの準備
 
@@ -87,17 +90,21 @@ TSAに関してもSRA同様、DDBJ/EBI/NCBIで同じデータが維持されて�
 ```
 
 - SRA形式ファイルをFASTQ形式に変換する
-	- `fastq-dump`するのに必要なsra-toolsをインストール
+	- `fasterq-dump`するのに必要なsra-toolsをインストール
 ```% conda install sra-tools```
-	- fastq-dumpの実行例（paired-endの場合）
-```% fastq-dump DRR118520.sra --split-files```
+	- fasterq-dumpの実行例
+```
+# Midgut
+% fasterq-dump SRR8189329.sra
+# Head
+% fasterq-dump SRR8189328.sra
+```
 - 発現定量に必要なツールのインストール
 	- samtools
 ```% conda install samtools```
 	- kallisto
 ```% conda install kallisto```
 	- `align_and_estimate_abundance.pl`は、Trinityパッケージに含まれているので、TrinityをGitHubから取ってくる。その際、以下の例ではホームディレクトリ以下の`Downloads`以下に取ってくるようにしてある。
-
 
 ```
 % cd 
@@ -113,8 +120,8 @@ TSAに関してもSRA同様、DDBJ/EBI/NCBIで同じデータが維持されて�
 #!/bin/sh
 thre=4
 transcript=IACV01.1.fsa_nt.gz
-left=DRR118520_1_val_1.fq.gz
-right=DRR118520_2_val_2.fq.gz
+left=$1
+right=$2
 # parameters to run above
 time perl /Users/bono/Downloads/trinityrnaseq/util/align_and_estimate_abundance.pl \
 --thread_count $thre \
@@ -131,9 +138,16 @@ time perl /Users/bono/Downloads/trinityrnaseq/util/align_and_estimate_abundance.
 
 ```% sh align_and_estimate_abundance.sh ```
 
-#### 発現定量結果の閲覧
+発現定量結果の閲覧
 
-`% less kallisto_out/abundance.tsv`
+```% less kallisto_out/abundance.tsv```
+
+#### DEG解析
+
+別のサンプルで実行。
+その二つの差分をとる。
+
+
 
 ### 【発展1】アッセンブル済みのcDNA配列セットのさらなる再利用
 
@@ -156,6 +170,8 @@ time perl /Users/bono/Downloads/trinityrnaseq/util/align_and_estimate_abundance.
 
 
 ## 3. de novo transcriptome assembly
+
+ここはハンズオンでなく、説明のみの予定。
 
 ### Homebrew のインストール
 Homebrewが入っていなければ、以下の手順でインストール。
@@ -194,9 +210,12 @@ $ brew cask install Java
 以下のコマンドでTrinity実行。
 
 ```
-$ Trinity --seqType fq --left DRR092257_1.fq.gz  --right DRR092257_2.fq.gz --max_memory 16G --CPU 4
+# ペアエンドの場合
+$ Trinity --seqType fq --left read_1.fq.gz --right read_2.fq.gz --max_memory 64G --CPU 4
+# シングルエンドの場合
+$ Trinity --seqType fq --single read.fq.gz --max_memory 64G --CPU 4
 ```
 
-変換したFASTQファイルを`--left`と`--right`オプションで、使用可能な最大メモリを`--max_memory`で、使用可能な最大CPU数を`--CPU`で指定する。
+変換したFASTQファイルをペアエンドの場合`--left`と`--right`オプションで（シングルエンドの場合は、`--single`）、使用可能な最大メモリを`--max_memory`で、使用可能な最大CPU数を`--CPU`で指定する。
 Trinityの実行は非常に長い時間がかかる。
-途中でエラー停止することなく、`trinity_out_dir`ディレクトリ中に`Trinity.fastaが`できていれば実行成功である。
+途中でエラー停止することなく、`trinity_out_dir`ディレクトリ中に`Trinity.fasta`ができていれば実行成功である。
