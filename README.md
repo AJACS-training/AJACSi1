@@ -53,6 +53,7 @@ DDBJ/EBI/NCBIの3つによって運営されている国際塩基配列データ
 1. 気になるFASTQデータをテキスト検索、SRA(DDBJ)からダウンロードします(例: SRR8189328,SRR81893289,DRR118520)
 2. 出て来た**RUN**の所の*sra*のリンクを「リンクのアドレスをコピー」して、例えば`curl`コマンドで取得します
 `curl -O ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/sra/ByExp/sra/DRX/DRX111/DRX111587/DRR118520/DRR118520.sra`
+**複数人で同時にやるとダウンロードが遅くなります。そこで、講習会では今後の講習に必要なデータが入ったハードディスクをお貸しします。**
 3. ダウンロードしてきたファイルサイズがオリジナルのそれと同じならOK。そうでない場合は再取得
 
 ### 1.2 Transcriptome Shotgun Assembly (TSA)
@@ -72,8 +73,8 @@ TSAに関してもSRA同様、DDBJ/EBI/NCBIで同じデータが維持されて�
 
 ## 2. SRAとTSAを組み合わせた発現定量解析
 
-- すでにアッセンブルされた配列セットはある 
-- それを使ってそれの元となった（実は元でなくてもいい）ラン（複数可）のFASTQファイルを使って発現定量する 
+- すでにアッセンブルされた配列セットは手元にある 
+- それを使ってそれの元となった（実は元でなくてもいい）FASTQファイル（複数可）を使って発現定量する 
 - Trinity付属プログラムの[```align_and_estimate_abundance.pl```](https://github.com/trinityrnaseq/trinityrnaseq/wiki/Trinity-Transcript-Quantification) を使うと、転写量を見積もって定量できる
 
 
@@ -136,7 +137,7 @@ time perl /Users/bono/Downloads/trinityrnaseq/util/align_and_estimate_abundance.
 
 以下のコマンドでスクリプトを実行
 
-```% sh align_and_estimate_abundance.sh ```
+```% sh align_and_estimate_abundance.sh XXX XXX```
 
 発現定量結果の閲覧
 
