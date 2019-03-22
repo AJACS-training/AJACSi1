@@ -50,15 +50,26 @@ DDBJ/EBI/NCBIの3つによって運営されている国際塩基配列データ
 日本からだとDDBJのそれが最寄り。
 
 #### 【課題1】[DDBJ Search](http://sra.dbcls.jp/)を使って、SRAから興味深いデータを検索
-1. 気になるFASTQデータをテキスト検索、SRA(DDBJ)からダウンロードします(例: SRR8189328,SRR8189329,DRR118520)
+1. 気になるFASTQデータをテキスト検索、SRA(DDBJ)からダウンロードします(例: SRR8189328,SRR8189329)
 2. 出て来た**RUN**の所の*sra*のリンクを「リンクのアドレスをコピー」して、例えば`curl`コマンドで取得します
 
 例：`curl -O ftp://ftp.ddbj.nig.ac.jp/ddbj_database/dra/sra/ByExp/sra/DRX/DRX111/DRX111587/DRR118520/DRR118520.sra`
 
-**複数人で同時にやるとダウンロードが遅くなります。そこで、講習会では今後の講習に必要なデータが入ったハードディスクをお貸しします。**
+**複数人で同時にやるとダウンロードが遅くなります。そこで、講習会では今後の講習に必要なデータが入ったハードディスクをお貸ししますので、この操作はやらないでください。**
 
-3. ダウンロードしてきたファイルサイズがオリジナルのそれと同じならOK。そうでない場合は再取得
+3. ダウンロードしてきたファイルサイズがオリジナルのそれと同じならOK（より一般的にはmd5値を確認）。そうでない場合は再取得。
 
+#### 【参考1】 [AOE (All of gene expression)](http://aoe.dbcls.jp/)
+公共遺伝子発現データベースに登録された遺伝子発現データについて、各種統計情報から検索・閲覧・比較することができる目次サイト。
+
+- 公共遺伝子発現データベース
+  - [NCBI Gene Expression Omnibus (GEO)](https://www.ncbi.nlm.nih.gov/geo/)
+  - [EBI ArrayExpress](https://www.ebi.ac.uk/arrayexpress/)
+  - [DDBJ Genomic Expression Archive (GEA)](https://www.ddbj.nig.ac.jp/gea/index.html) 
+
+
+[【統合TV】AOEを使って遺伝子発現データベースの統計を見ながら検索する 2018](https://doi.org/10.7875/togotv.2018.128)
+ 
 ### 1.2 Transcriptome Shotgun Assembly (TSA)
 
 TSAは、INSDCによって維持されている、アッセンブルされたcDNA配列のデータベース。
@@ -93,16 +104,8 @@ TSAに関してもSRA同様、DDBJ/EBI/NCBIで同じデータが維持されて�
 % conda config --add channels bioconda
 ```
 
-- SRA形式ファイルをFASTQ形式に変換する
-	- `fasterq-dump`するのに必要なsra-toolsをインストール
+- `fasterq-dump`するのに必要なsra-toolsをインストール
 ```% conda install sra-tools```
-	- fasterq-dumpの実行例
-```
-# Midgut
-% fasterq-dump SRR8189329.sra
-# Head
-% fasterq-dump SRR8189328.sra
-```
 - 発現定量に必要なツールのインストール
 	- samtools
 ```% conda install samtools```
@@ -116,6 +119,27 @@ TSAに関してもSRA同様、DDBJ/EBI/NCBIで同じデータが維持されて�
 % git clone https://github.com/trinityrnaseq/trinityrnaseq
 ```
 
+#### データの準備
+
+FASTQ形式のファイルを準備
+
+- SRA形式ファイルがある場合
+  - fasterq-dumpの実行例
+```
+# Midgut
+% fasterq-dump SRR8189329.sra
+# Head
+% fasterq-dump SRR8189328.sra
+```
+- SRA形式ファイルが手元にない場合
+  - fasterq-dumpの実行例
+```
+# Midgut
+% fasterq-dump SRR8189329
+# Head
+% fasterq-dump SRR8189328
+```
+
 #### 発現定量スクリプトの実行
 
 以下のスクリプトを`align_and_estimate_abundance.sh`として保存　 [【参考ブログ】](https://bonohu.github.io/align-and-estimate-abundance.html)
@@ -127,7 +151,7 @@ transcript=IACV01.1.fsa_nt.gz
 left=$1
 right=$2
 # parameters to run above
-time perl /Users/bono/Downloads/trinityrnaseq/util/align_and_estimate_abundance.pl \
+time perl ~/Downloads/trinityrnaseq/util/align_and_estimate_abundance.pl \
 --thread_count $thre \
 --transcripts $transcript \
 --seqType fq \
@@ -140,7 +164,7 @@ time perl /Users/bono/Downloads/trinityrnaseq/util/align_and_estimate_abundance.
 
 以下のコマンドでスクリプトを実行
 
-```% sh align_and_estimate_abundance.sh XXX XXX```
+```% sh align_and_estimate_abundance.sh SRR8189329_1.fastq.gz SRR8189329_2.fastq.gz```
 
 発現定量結果の閲覧
 
