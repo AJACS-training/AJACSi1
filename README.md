@@ -222,7 +222,7 @@ Trinityは転写配列のアッセンブルに使われるソフトウェアで�
 
 ```
 $ brew tap brewsci/bio
-$ brew tap brewscie/science
+$ brew tap brewsci/science
 $ brew install -v trinity 
 ```
 
